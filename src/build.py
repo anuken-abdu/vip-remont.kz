@@ -6,7 +6,7 @@ from data import *
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
-VER = "2810260100"
+VER = "2810260200"
 TODAY = datetime.date.today().isoformat()
 E = lambda s: html.escape(str(s), quote=True)
 def WA_URL(t="Здравствуйте! Хочу рассчитать стоимость ремонта квартиры."): return f"https://wa.me/{WA}?text=" + quote(t)
@@ -17,38 +17,41 @@ SV = {s["slug"]: s for s in SERVICES}
 def logo(cls="logo"):
     if IMG("logo.png"):
         return f'<a class="{cls}" href="/" aria-label="{BRAND} — на главную"><img src="/images/logo.png?v={VER}" alt="{BRAND}" height="44"></a>'
-    return f'<a class="{cls}" href="/" aria-label="{BRAND} — на главную"><b>{BRAND}</b><small>Астана</small></a>'
+    return f'<a class="{cls}" href="/" aria-label="{BRAND} — на главную"><b>{BRAND}</b><small>Ремонт квартир в Астане</small></a>'
 
 NAV = [("/uslugi/", "Услуги"), ("/remont-pod-klyuch/", "Под ключ"), ("/#raschet", "Расчёт"), ("/rayony/", "Районы"), ("/voprosy/", "Вопросы"), ("/kontakty/", "Контакты")]
 
 def cta(cls="", wa_text=None, calc=True):
-    c = '<a class="btn btn-ac" href="#raschet">Рассчитать стоимость</a>' if calc else f'<a class="btn btn-ac" href="tel:{TEL}" data-ev="call">{PHONE_LOCAL}</a>'
-    return f'<div class="cta {cls}">{c}<a class="btn btn-wa" href="{WA_URL(wa_text) if wa_text else WA_URL()}" target="_blank" rel="noopener" data-ev="wa">Написать в WhatsApp</a></div>'
+    c = '<a class="btn btn-ac" href="#raschet">Рассчитать стоимость</a>' if calc else '<a class="btn btn-ac" href="/uslugi/">Посмотреть услуги</a>'
+    return f'<div class="cta {cls}">{c}</div>'
 
 def header(cur):
     items = "".join(f'<li><a href="{h}"{" aria-current=page" if h == cur else ""}>{n}</a></li>' for h, n in NAV)
     return f'''<a class="skip" href="#main">Перейти к содержанию</a>
 <header class="hdr"><div class="wrap hdr-in">{logo()}
-<nav class="nav" id="nav" aria-label="Основное меню"><ul>{items}</ul><div class="nav-x"><a class="btn btn-ac" href="tel:{TEL}" data-ev="call">Позвонить</a><a class="btn btn-wa" href="{WA_URL()}" target="_blank" rel="noopener" data-ev="wa">WhatsApp</a></div></nav>
+<nav class="nav" id="nav" aria-label="Основное меню"><ul>{items}</ul><div class="nav-x"><a href="tel:{TEL}" data-ev="call">{PHONE_LOCAL}</a></div></nav>
 <a class="hdr-ph" href="tel:{TEL}" data-ev="call">{PHONE_LOCAL}</a>
 <button class="burger" type="button" aria-controls="nav" aria-expanded="false"><span class="b-o">Меню</span><span class="b-c">Закрыть</span></button></div></header>'''
+
+_sv = lambda d: f'<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="{d}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+SVG_BACK = _sv("M19 12H5M11 6l-6 6 6 6"); SVG_UP = _sv("M12 19V5M6 11l6-6 6 6"); SVG_X = _sv("M6 6l12 12M18 6L6 18"); SVG_SEND = _sv("M4 12l16-8-6 16-3-7z")
+SVG_CHAT = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><path d="M4 13h2.5a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM20 13h-2.5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1H19a1 1 0 0 0 1-1z"/><path d="M19 18v.5a2.5 2.5 0 0 1-2.5 2.5H13"/></g></svg>'
 
 def footer():
     sv = "".join(f'<li><a href="/{s["slug"]}/">{s["name"]}</a></li>' for s in SERVICES)
     ds = "".join(f'<li><a href="/rayony/{s}/">{n}</a></li>' for s, n, _ in DISTRICTS)
     ig = f'<li><a href="{INSTAGRAM}" target="_blank" rel="noopener">Instagram</a></li>' if INSTAGRAM else ""
     return f'''<footer class="ftr"><div class="wrap">
-<div class="ftr-top"><p class="ftr-big">Рассчитаем ремонт вашей квартиры</p><a class="ftr-tel" href="tel:{TEL}" data-ev="call">{PHONE_LOCAL}</a></div>
+<div class="ftr-top"><p class="ftr-big">Рассчитаем ваш ремонт</p><a class="ftr-tel" href="tel:{TEL}" data-ev="call">{PHONE_LOCAL}</a></div>
 <div class="ftr-g"><div class="ftr-a">{logo("logo logo-f")}<p>{LEAD}</p>{f'<p>{HOURS}</p>' if HOURS else ""}</div>
 <div><h4>Услуги</h4><ul class="ftr-2">{sv}</ul></div><div><h4>Районы Астаны</h4><ul>{ds}</ul></div>
 <div><h4>Связь</h4><ul><li><a href="tel:{TEL}" data-ev="call">Позвонить</a></li><li><a href="{WA_URL()}" target="_blank" rel="noopener" data-ev="wa">WhatsApp</a></li>{ig}<li><a href="/voprosy/">Вопросы</a></li><li><a href="/kontakty/">Контакты</a></li></ul></div></div>
 <div class="ftr-b"><span>© {datetime.date.today().year} {BRAND}, Астана</span><a href="/politika/">Политика конфиденциальности</a><a href="{DEV_URL}" target="_blank" rel="noopener">Разработка сайта — {DEV_NAME}</a></div></div></footer>
-<div class="mbar"><a class="btn btn-ac" href="tel:{TEL}" data-ev="call">Позвонить</a><a class="btn btn-wa" href="{WA_URL()}" target="_blank" rel="noopener" data-ev="wa">WhatsApp</a></div>
-<div class="fl"><button class="fl-b fl-back" type="button" hidden>Назад</button><button class="fl-b fl-top" type="button" hidden>Наверх</button><button class="fl-b fl-chat" type="button" aria-controls="chat" aria-expanded="false">Задать вопрос</button></div>
-<section class="chat" id="chat" role="dialog" aria-label="Онлайн-помощник" hidden><div class="chat-h"><div><b>Онлайн-помощник</b><small>Ответит на вопросы о ремонте</small></div><button class="chat-x" type="button">Закрыть</button></div>
+<div class="fl"><button class="fl-b fl-back" type="button" aria-label="Назад" title="Назад" hidden>{SVG_BACK}</button><button class="fl-b fl-top" type="button" aria-label="Наверх" title="Наверх" hidden>{SVG_UP}</button><button class="fl-b fl-chat" type="button" aria-label="Онлайн-поддержка" title="Онлайн-поддержка" aria-controls="chat" aria-expanded="false">{SVG_CHAT}</button></div>
+<section class="chat" id="chat" role="dialog" aria-label="Онлайн-помощник" hidden><div class="chat-h"><div><b>Онлайн-помощник</b><small>Ответит на вопросы о ремонте</small></div><button class="chat-x" type="button" aria-label="Закрыть">{SVG_X}</button></div>
 <div class="chat-b" id="chatB" aria-live="polite"></div><div class="chat-q" id="chatQ"></div>
 <div class="chat-cta"><a href="tel:{TEL}" data-ev="call">Позвонить</a><a href="{WA_URL()}" target="_blank" rel="noopener" data-ev="wa" id="chatWa">В WhatsApp</a></div>
-<form class="chat-f" id="chatF" autocomplete="off"><label class="sr" for="chatI">Ваш вопрос</label><input id="chatI" type="text" maxlength="500" placeholder="Например: сколько стоит ремонт под ключ?"><button type="submit">Отправить</button></form></section>'''
+<form class="chat-f" id="chatF" autocomplete="off"><label class="sr" for="chatI">Ваш вопрос</label><input id="chatI" type="text" maxlength="500" placeholder="Например: сколько стоит ремонт под ключ?"><button type="submit" aria-label="Отправить">{SVG_SEND}</button></form></section>'''
 
 ORG = {"@context": "https://schema.org", "@type": ["LocalBusiness", "HomeAndConstructionBusiness"], "@id": SITE + "/#org", "name": BRAND, "url": SITE + "/",
        "telephone": PHONE, "image": SITE + "/assets/img/og/home.jpg", "description": LEAD,
@@ -88,13 +91,13 @@ def page(url, title, desc, body, cur="", ld=(), crumbs=None, og_title=None):
 {ga}
 <title>{E(title)}</title><meta name="description" content="{E(desc)}">
 <link rel="canonical" href="{full}"><meta name="robots" content="index,follow,max-image-preview:large">
-<meta name="theme-color" content="#f2efe8"><meta name="geo.region" content="KZ-71"><meta name="geo.placename" content="Астана"><meta name="geo.position" content="51.128207;71.430411"><meta name="ICBM" content="51.128207, 71.430411">
+<meta name="theme-color" content="#f5efe7"><meta name="geo.region" content="KZ-71"><meta name="geo.placename" content="Астана"><meta name="geo.position" content="51.128207;71.430411"><meta name="ICBM" content="51.128207, 71.430411">
 <meta property="og:type" content="website"><meta property="og:locale" content="ru_KZ"><meta property="og:site_name" content="{BRAND}">
 <meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}"><meta property="og:url" content="{full}">
 <meta property="og:image" content="{SITE}/assets/img/og/{og}.jpg?v={VER}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
-<link rel="preload" href="/assets/fonts/cormorant-garamond-cyrillic-600-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/onest-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/playfair-display-cyrillic-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/golos-text-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/styles.css?v={VER}">
 {"".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in lds)}
 </head><body>
@@ -118,19 +121,19 @@ def sec(title, inner, sub="", cls="", link=None, sid=""):
 def svc_index(exclude=None, groups=True):
     out = ""
     for g, gname in GROUPS:
-        rows = "".join(f'<li><a href="/{s["slug"]}/"><span class="ix-n">{SERVICES.index(s)+1:02d}</span><span class="ix-t"><b>{s["name"]}</b><small>{s["lead"]}</small></span><span class="ix-m">Подробнее</span></a></li>'
+        rows = "".join(f'<li><a href="/{s["slug"]}/"><span class="ix-t"><b>{s["name"]}</b><small>{SUB[s["slug"]]}</small></span><span class="ix-m">Подробнее</span></a></li>'
                        for s in SERVICES if s["grp"] == g and s["slug"] != exclude)
         out += f'<div class="ix-g">{f"<h3>{gname}</h3>" if groups else ""}<ol class="ix">{rows}</ol></div>'
     return f'<div class="ix-w">{out}</div>'
 
 def numbered(items, cls="nl"):
-    return f'<ol class="{cls}">' + "".join(f'<li><span>{i+1:02d}</span>{E(x)}</li>' for i, x in enumerate(items)) + "</ol>"
+    return f'<ul class="{cls}">' + "".join(f'<li>{E(x)}</li>' for x in items) + "</ul>"
 
 def advantages(n=6):
-    return '<div class="adv">' + "".join(f'<div class="adv-i"><span class="adv-n">{i+1:02d}</span><h3>{t}</h3><p>{x}</p></div>' for i, (t, x) in enumerate(ADVANTAGES[:n])) + "</div>"
+    return '<div class="adv">' + "".join(f'<div class="adv-i"><h3>{t}</h3><p>{x}</p></div>' for i, (t, x) in enumerate(ADVANTAGES[:n])) + "</div>"
 
 def steps():
-    return '<ol class="st">' + "".join(f'<li><span class="st-n">Этап {i+1}</span><h3>{t}</h3><p>{x}</p></li>' for i, (t, x) in enumerate(STEPS)) + "</ol>"
+    return '<ol class="st">' + "".join(f'<li><h3>{t}</h3><p>{x}</p></li>' for i, (t, x) in enumerate(STEPS)) + "</ol>"
 
 def faq_html(faq):
     return '<div class="faq">' + "".join(f'<details><summary><span>{q}</span><i aria-hidden="true"></i></summary><p>{a}</p></details>' for q, a in faq) + "</div>"
@@ -139,8 +142,8 @@ def quiz(pre=None):
     qs = ""
     for i, (q, opts) in enumerate(QUIZ):
         o = "".join(f'<label class="qz-o"><input type="radio" name="q{i}" value="{E(x)}"{" checked" if pre and x == pre and i == 1 else ""}><span>{x}</span></label>' for x in opts)
-        qs += f'<fieldset class="qz-q" data-i="{i}"{"" if i == 0 else " hidden"}><legend><span class="qz-c">Вопрос {i+1} из {len(QUIZ)}</span>{q}</legend><div class="qz-os">{o}</div></fieldset>'
-    return f'''<section class="sec qz-sec" id="raschet"><div class="wrap qz-w"><div class="qz-l"><h2>Рассчитать стоимость ремонта</h2><p>Ответьте на четыре вопроса — ответы уйдут в WhatsApp, а мы подготовим расчёт. Точную смету составим после замера, цена фиксируется в договоре.</p>
+        qs += f'<fieldset class="qz-q" data-i="{i}"{"" if i == 0 else " hidden"}><legend>{q}</legend><div class="qz-os">{o}</div></fieldset>'
+    return f'''<section class="sec qz-sec" id="raschet"><div class="wrap qz-w"><div class="qz-l"><h2>Расчёт стоимости</h2><p>Ответьте на четыре вопроса — ответы уйдут в WhatsApp, а мы подготовим расчёт. Точную смету составим после замера, цена фиксируется в договоре.</p>
 <p class="qz-alt">Удобнее голосом? <a href="tel:{TEL}" data-ev="call">{PHONE_LOCAL}</a></p></div>
 <form class="qz" id="qz" novalidate><div class="qz-bar"><i style="width:25%"></i></div>{qs}
 <div class="qz-done" hidden><p class="qz-c">Готово</p><p class="qz-sum"></p><a class="btn btn-wa qz-send" href="{WA_URL()}" target="_blank" rel="noopener" data-ev="wa">Отправить в WhatsApp</a><button type="button" class="qz-re">Пройти заново</button></div>
@@ -150,15 +153,20 @@ def portfolio():
     ph = sorted((ROOT / "images" / "portfolio").glob("*.jpg"))
     if not ph: return ""
     g = "".join(f'<figure><img src="/images/portfolio/{p.name}?v={VER}" alt="Ремонт квартиры в Астане — пример работы {i+1}" loading="lazy" decoding="async" width="800" height="600"></figure>' for i, p in enumerate(ph))
-    return sec("Наши работы", f'<div class="pf">{g}</div>', "Квартиры, которые мы отремонтировали в Астане.")
+    return sec("Наши работы", f'<div class="pf">{g}</div>', "Наши квартиры в Астане.")
 
 def districts_html(cur=None):
     return '<ul class="ds">' + "".join(f'<li><a href="/rayony/{s}/"{" aria-current=page" if s == cur else ""}><b>{n}</b><span>Ремонт квартир {inn}</span></a></li>' for s, n, inn in DISTRICTS) + "</ul>"
 
-def band(title="Обсудим ваш ремонт", sub="Позвоните или напишите в WhatsApp — договоримся о замере."):
-    return f'''<section class="band"><div class="wrap band-in"><div><h2>{title}</h2><p>{sub}</p></div><div class="cta"><a class="btn btn-light" href="tel:{TEL}" data-ev="call">{PHONE_LOCAL}</a><a class="btn btn-wa" href="{WA_URL()}" target="_blank" rel="noopener" data-ev="wa">Написать в WhatsApp</a></div></div></section>'''
+def band(title="Обсудим ваш ремонт", sub="Приедем на замер и подготовим смету — цена закрепляется в договоре."):
+    return f'''<section class="band"><div class="wrap band-in"><div><h2>{title}</h2><p>{sub}</p></div><a class="btn btn-light" href="#raschet">Рассчитать стоимость</a></div></section>'''
+def founder():
+    F = FOUNDER
+    ph = f'<img src="/images/{F["photo"]}?v={VER}" alt="{F["name"]} — {F["role"]}" width="900" height="1100" loading="lazy" decoding="async">' if IMG(F["photo"]) else f'<span class="fd-mono" aria-hidden="true">{"".join(w[0] for w in F["name"].split())}</span>'
+    wa = WA_URL(f"Здравствуйте, Серик! Хочу проконсультироваться по ремонту квартиры.")
+    return f'''<section class="sec fd"><div class="wrap fd-in"><figure class="fd-ph">{ph}</figure><div class="fd-t"><h2>{F["name"]}</h2><p class="fd-role">{F["role"][0].upper() + F["role"][1:]}</p><p class="fd-lead">{F["lead"]}</p><p>{F["text"]}</p><a class="btn btn-ac" href="{wa}" target="_blank" rel="noopener" data-ev="wa">Консультация руководителя</a></div></div></section>'''
 
-FACTS = [("Смета", "в течение трёх часов после замера"), ("Цена", "фиксируется в договоре"), ("Бригада", "своя, без субподрядчиков")]
+FACTS = [("Смета", "через три часа после замера"), ("Цена", "закреплена в договоре"), ("Бригада", "своя, без подрядчиков")]
 def facts(): return '<dl class="facts">' + "".join(f"<div><dt>{a}</dt><dd>{b}</dd></div>" for a, b in FACTS) + "</dl>"
 
 def side(photo, title, items, more=None):
@@ -174,13 +182,14 @@ def hero(h1, lead, side_html, crumbs=True, wa_text=None, home=False):
 def build_home():
     body = f'''{hero('Ремонт квартир в&nbsp;Астане <em>под&nbsp;ключ</em>', "Черновой, чистовой и дизайнерский ремонт, санузлы и кухни. Одна бригада, одна смета, сдача квартиры под заезд.",
                   side("hero.jpg", "Ремонт под ключ: что входит", TURNKEY[:7], ("Весь перечень работ", "/remont-pod-klyuch/")), crumbs=False, home=True)}
-{sec("Услуги", svc_index(), "Ремонт квартиры целиком или отдельные работы — от электрики до покраски.", sid="uslugi")}
-{sec("Что входит в ремонт под ключ", numbered(TURNKEY, "nl nl-3"), "Все работы — в одной смете и одном договоре.", "sec-dark", ("Подробнее о ремонте под ключ", "/remont-pod-klyuch/"))}
+{sec("Услуги", svc_index(), "Ремонт целиком или отдельные работы.", sid="uslugi")}
+{sec("Что входит под ключ", numbered(TURNKEY, "nl nl-3"), "Все работы — в одной смете.", "sec-dark", ("Подробнее о ремонте под ключ", "/remont-pod-klyuch/"))}
 {sec("Почему с нами спокойно", advantages())}
+{founder()}
 {sec("Как мы работаем", steps(), "", "sec-alt")}
 {quiz()}
 {portfolio()}
-{sec("Работаем по всей Астане", districts_html(), "Выезжаем на замер в любой район города.", link=("Все районы", "/rayony/"))}
+{sec("Работаем по всей Астане", districts_html(), "Замер в любом районе города.", link=("Все районы", "/rayony/"))}
 {sec("Частые вопросы", faq_html(FAQ), "", "sec-alt", ("Все вопросы", "/voprosy/"))}
 {band()}'''
     write("/", page("/", "Ремонт квартир в Астане под ключ — смета за 3 часа после замера",
@@ -195,7 +204,7 @@ def build_services():
     for s in SERVICES:
         url = f'/{s["slug"]}/'
         faq = s["faq"] + [FAQ[0], FAQ[1]]
-        incl = sec("Что входит", numbered(s["inc"], "nl nl-2"), "Точный перечень работ фиксируем в смете после замера.") if IMG(f'uslugi/{s["slug"]}.jpg') else ""
+        incl = sec("Что входит", numbered(s["inc"], "nl nl-2"), "Точный перечень — в смете после замера.") if IMG(f'uslugi/{s["slug"]}.jpg') else ""
         body = f'''{hero(nb(s["h1"]), s["lead"], side(f'uslugi/{s["slug"]}.jpg', "Что входит", s["inc"]), wa_text=f"Здравствуйте! Интересует: {s['name'].lower()}. Хочу рассчитать стоимость.")}
 {incl}
 {sec("Почему с нами спокойно", advantages())}
@@ -216,9 +225,9 @@ def build_districts():
         url = f"/rayony/{slug}/"
         h1 = f"Ремонт квартир {inn}, Астана"
         lead = f"Ремонт квартир под ключ {inn}: новостройки и вторичное жильё. Черновой, чистовой и дизайнерский ремонт, санузлы и кухни."
-        fq = [(f"Выезжаете на замер {inn}?", f"Да, выезжаем на замер {inn} и по всей Астане. Договоритесь о времени по телефону {PHONE_LOCAL} или в WhatsApp."), FAQ[0], FAQ[1]]
+        fq = [(f"Выезжаете в район {n}?", f"Да, выезжаем на замер {inn} и по всей Астане. Договоритесь о времени по телефону {PHONE_LOCAL} или в WhatsApp."), FAQ[0], FAQ[1]]
         body = f'''{hero(nb(h1), lead, side(None, "Ремонт под ключ: что входит", TURNKEY[:7], ("Весь перечень работ", "/remont-pod-klyuch/")), wa_text=f"Здравствуйте! Нужен ремонт квартиры, район {n}.")}
-{sec(f"Услуги {inn}", svc_index())}
+{sec("Услуги", svc_index(), f"Ремонт квартир {inn}.")}
 {sec("Как мы работаем", steps(), "", "sec-alt")}
 {quiz()}
 {sec("Вопросы", faq_html(fq))}
@@ -229,7 +238,7 @@ def build_districts():
 
 def build_misc():
     allfaq = FAQ + [q for s in SERVICES for q in s["faq"]]
-    body = f'''{hero("Вопросы о ремонте квартир", "Отвечаем на частые вопросы о стоимости, сроках, материалах и контроле ремонта.", side(None, "Коротко о главном", [f"{a} {b}" for a, b in FACTS]))}
+    body = f'''{hero("Вопросы о ремонте квартир", "Отвечаем на частые вопросы о стоимости, сроках, материалах и контроле ремонта.", side(None, "Коротко о главном", ["Смета через три часа", "Цена в договоре", "Своя бригада", "Приёмка по этапам"]))}
 {sec("Частые вопросы", faq_html(allfaq))}{quiz()}{band()}'''
     write("/voprosy/", page("/voprosy/", "Вопросы о ремонте квартир в Астане", "Сколько стоит ремонт квартиры, как быстро будет смета, кто закупает материалы, как проходит приёмка работ.", body, "/voprosy/",
                             [ld_faq(allfaq)], crumbs=[("/voprosy/", "Вопросы")], og_title="Вопросы о ремонте квартир"))
@@ -238,7 +247,7 @@ def build_misc():
     if HOURS: rows += f"<li><span>Режим работы</span><b>{HOURS}</b></li>"
     rows += "<li><span>Где работаем</span><b>Все районы Астаны</b></li>"
     body = f'''{hero("Контакты", "Позвоните или напишите в WhatsApp — договоримся о замере и подготовим смету.", side(None, "Как начать", [t for t, _ in STEPS[:3]]))}
-{sec("Связаться", f'<ul class="ct">{rows}</ul>')}{quiz()}{sec("Районы", districts_html(), "", "sec-alt")}'''
+{sec("Связаться", f'<ul class="ct">{rows}</ul>')}{founder()}{quiz()}{sec("Районы", districts_html(), "", "sec-alt")}'''
     write("/kontakty/", page("/kontakty/", f"Контакты — ремонт квартир в Астане, {PHONE_LOCAL}", f"Ремонт квартир в Астане: {PHONE_LOCAL}, WhatsApp. Замер в любом районе города.", body, "/kontakty/",
                              crumbs=[("/kontakty/", "Контакты")], og_title="Контакты"))
     S = [("Какие данные мы получаем", "Если вы проходите расчёт, звоните или пишете в WhatsApp, мы видим ваш номер и сообщения, которые вы отправляете. Ответы расчёта передаются только в WhatsApp и на сайте не сохраняются."),
@@ -260,7 +269,7 @@ def build_meta():
     (DIST / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{sm}</urlset>\n', encoding="utf-8")
     bots = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-SearchBot", "PerplexityBot", "Google-Extended", "Bingbot", "YandexBot"]
     (DIST / "robots.txt").write_text("User-agent: *\nAllow: /\nDisallow: /api/\n\n" + "".join(f"User-agent: {b}\nAllow: /\n\n" for b in bots) + f"Sitemap: {SITE}/sitemap.xml\n", encoding="utf-8")
-    ll = [f"# {BRAND} — Астана", "", f"> {LEAD}", "", "## Главное", "- Город: Астана, все районы (Есиль, Алматы, Сарыарка, Байконыр, Нура)",
+    ll = [f"# {BRAND} — Астана", "", f"> {LEAD}", "", "## Главное", "- Город: Астана, все районы (Есиль, Алматы, Сарыарка, Байконыр, Нура)", f"- Руководитель и основатель: {FOUNDER['name']}",
           f"- Телефон и WhatsApp: {PHONE_LOCAL} ({PHONE}), https://wa.me/{WA}",
           "- Стоимость: зависит от площади, вида ремонта и материалов; смета — в течение трёх часов после замера; цена фиксируется в договоре",
           f"- Расчёт стоимости онлайн: {SITE}/#raschet", "", "## Преимущества"] + [f"- {t}: {x}" for t, x in ADVANTAGES] + ["", "## Этапы"] + [f"{i+1}. {t} — {x}" for i, (t, x) in enumerate(STEPS)] + [""]
@@ -268,7 +277,7 @@ def build_meta():
         ll += [f"## [{s['h1']}]({SITE}/{s['slug']}/)", f"- {s['lead']}", "- Входит: " + "; ".join(s["inc"]), ""]
     ll += ["## Районы"] + [f"- [Район {n}]({SITE}/rayony/{s}/)" for s, n, _ in DISTRICTS] + ["", "## Частые вопросы"] + [f"- {q} {a}" for q, a in FAQ]
     (DIST / "llms.txt").write_text("\n".join(ll) + "\n", encoding="utf-8")
-    (DIST / "site.webmanifest").write_text(json.dumps({"name": f"{BRAND} — Астана", "short_name": BRAND, "start_url": "/", "display": "browser", "background_color": "#f2efe8", "theme_color": "#f2efe8",
+    (DIST / "site.webmanifest").write_text(json.dumps({"name": f"{BRAND} — Астана", "short_name": BRAND, "start_url": "/", "display": "browser", "background_color": "#f5efe7", "theme_color": "#f5efe7",
         "icons": [{"src": "/icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png"}]}, ensure_ascii=False), encoding="utf-8")
     (ROOT / "src" / "og_list.json").write_text(json.dumps(OG, ensure_ascii=False, indent=1), encoding="utf-8")
 

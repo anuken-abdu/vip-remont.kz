@@ -85,7 +85,7 @@
   var hist = [], started = false, busy = false, apiOk = true;
   function openChat() {
     chat.hidden = false; body.classList.add("chat-open"); lock(); fab.setAttribute("aria-expanded", "true");
-    if (!started) { started = true; say("Здравствуйте! Я онлайн-помощник. Подскажу по видам ремонта, этапам и расчёту стоимости. Какую квартиру планируете ремонтировать?", QUICK); }
+    if (!started) { started = true; say("Здравствуйте! Я онлайн-помощник VIP Remont. Подскажу по видам ремонта, этапам и расчёту стоимости. Какую квартиру планируете ремонтировать?", QUICK); }
     if (window.innerWidth > 767) setTimeout(function () { ci.focus(); }, 50);
   }
   function closeChat() { if (chat.hidden) return; chat.hidden = true; body.classList.remove("chat-open"); lock(); fab.setAttribute("aria-expanded", "false"); fab.focus(); }
@@ -96,7 +96,7 @@
   function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function linkify(s) {
     return esc(s).replace(/(\/(?:[a-z\-]+\/)+(?:#raschet)?|\/#raschet)/g, '<a href="$1">$1</a>')
-      .replace(/(8 747 647 86 05|\+7 747 647 86 05)/g, '<a href="tel:' + CFG.tel + '" data-ev="call">$1</a>');
+      .split(PH).join('<a href="tel:' + CFG.tel + '" data-ev="call">' + PH + '</a>');
   }
   function add(role, text) { var m = document.createElement("div"); m.className = "msg " + (role === "u" ? "msg-u" : "msg-b"); m.innerHTML = role === "u" ? esc(text) : linkify(text); cb.appendChild(m); cb.scrollTop = cb.scrollHeight; }
   function dots() { var t = document.createElement("div"); t.className = "msg msg-b dots"; t.innerHTML = "<i></i><i></i><i></i>"; cb.appendChild(t); cb.scrollTop = cb.scrollHeight; return t; }
