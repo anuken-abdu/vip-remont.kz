@@ -1,0 +1,94 @@
+{
+ "/": [
+  "home",
+  "Ремонт квартир в Астане под ключ"
+ ],
+ "/uslugi/": [
+  "uslugi",
+  "Услуги по ремонту квартир"
+ ],
+ "/remont-pod-klyuch/": [
+  "remont-pod-klyuch",
+  "Ремонт квартир под ключ в Астане"
+ ],
+ "/chernovoy-remont/": [
+  "chernovoy-remont",
+  "Черновой ремонт квартиры в Астане"
+ ],
+ "/chistovoy-remont/": [
+  "chistovoy-remont",
+  "Чистовой ремонт квартиры в Астане"
+ ],
+ "/dizaynerskiy-remont/": [
+  "dizaynerskiy-remont",
+  "Дизайнерский ремонт квартиры в Астане"
+ ],
+ "/remont-sanuzla/": [
+  "remont-sanuzla",
+  "Ремонт санузла и ванной комнаты в Астане"
+ ],
+ "/remont-kuhni/": [
+  "remont-kuhni",
+  "Ремонт кухни в Астане"
+ ],
+ "/elektromontazh/": [
+  "elektromontazh",
+  "Электромонтажные работы в квартире в Астане"
+ ],
+ "/santehnika/": [
+  "santehnika",
+  "Сантехнические работы в квартире в Астане"
+ ],
+ "/shtukaturka/": [
+  "shtukaturka",
+  "Штукатурка стен и стяжка пола в Астане"
+ ],
+ "/natyazhnye-potolki/": [
+  "natyazhnye-potolki",
+  "Натяжные потолки в Астане"
+ ],
+ "/ukladka-plitki/": [
+  "ukladka-plitki",
+  "Укладка плитки и керамогранита в Астане"
+ ],
+ "/malyarnye-raboty/": [
+  "malyarnye-raboty",
+  "Малярные работы в квартире в Астане"
+ ],
+ "/rayony/": [
+  "rayony",
+  "Ремонт квартир по районам Астаны"
+ ],
+ "/rayony/esil/": [
+  "rayony-esil",
+  "Ремонт квартир: район Есиль"
+ ],
+ "/rayony/almaty/": [
+  "rayony-almaty",
+  "Ремонт квартир: район Алматы"
+ ],
+ "/rayony/saryarka/": [
+  "rayony-saryarka",
+  "Ремонт квартир: район Сарыарка"
+ ],
+ "/rayony/baykonyr/": [
+  "rayony-baykonyr",
+  "Ремонт квартир: район Байконыр"
+ ],
+ "/rayony/nura/": [
+  "rayony-nura",
+  "Ремонт квартир: район Нура"
+ ],
+ "/voprosy/": [
+  "voprosy",
+  "Вопросы о ремонте квартир"
+ ],
+ "/kontakty/": [
+  "kontakty",
+  "Контакты"
+ ],
+ "/politika/": [
+  "politika",
+  "Политика конфиденциальности"
+ ]
+}
