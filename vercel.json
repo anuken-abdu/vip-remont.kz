@@ -1,0 +1,16 @@
+{
+  "buildCommand": "python3 src/build.py",
+  "installCommand": "",
+  "outputDirectory": "dist",
+  "trailingSlash": true,
+  "headers": [
+    { "source": "/assets/fonts/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/assets/app.js", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/assets/img/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000" }] },
+    { "source": "/(.*)", "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }, { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }] }
+  ],
+  "redirects": [
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/(.*)", "has": [{ "type": "host", "value": "vip-remont.kz" }], "destination": "https://www.vip-remont.kz/$1", "permanent": true }
+  ]
+}
