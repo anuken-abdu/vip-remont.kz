@@ -194,6 +194,12 @@ SERVICES = [
    ["Гидроизоляция", "Душевая зона с трапом", "Плитка и керамогранит", "Скрытые смесители", "Тёплый пол", "Установка ванны или душевой"],
    [("Делаете душевую без поддона?", "Да, с трапом и уклоном пола. Решение зависит от высоты стяжки — проверим на замере.")],
    prep=["Выберите ванну или душевую и смесители", "Решите, нужен ли тёплый пол", "Купите плитку с запасом на подрезку"]),
+ S("remont-tualeta", "pom", "Ремонт туалета", "Инсталляция, плитка, короб со скрытым люком",
+   "Ремонт туалета в Астане",
+   "Ремонт туалета в Астане: инсталляция и подвесной унитаз, плитка или керамогранит, короб для стояков со скрытым ревизионным люком.",
+   ["Демонтаж старой отделки", "Замена труб", "Монтаж инсталляции", "Короб со скрытым люком", "Шумоизоляция стояков", "Плитка или керамогранит", "Установка унитаза и раковины"],
+   [("Можно поставить подвесной унитаз?", "Да, монтируем инсталляцию и прячем её в короб. Нужны место и доступ к стояку — проверим на замере.")],
+   prep=["Выберите инсталляцию и унитаз", "Решите, нужна ли раковина", "Выберите плитку с запасом на подрезку"]),
  S("remont-kuhni", "pom", "Ремонт кухни", "Розетки под технику, фартук, свет",
    "Ремонт кухни в Астане",
    "Ремонт кухни в Астане: перенос розеток и выводов под технику, разводка воды, выравнивание стен, фартук и освещение рабочей зоны.",
@@ -358,32 +364,32 @@ SERVICES = [
 ]
 
 # ---------------------------------------------------------------- главная: что показать крупно
-HOME_VID = ["remont-pod-klyuch", "elitnyy-remont", "dizaynerskiy-remont", "kapitalnyy-remont", "remont-v-novostroyke", "evroremont", "kosmeticheskiy-remont"]
+HOME_VID = ["remont-pod-klyuch", "elitnyy-remont", "dizaynerskiy-remont", "kapitalnyy-remont", "remont-v-novostroyke", "kosmeticheskiy-remont"]
 HOME_POM = ["remont-sanuzla", "remont-kuhni", "remont-komnaty", "remont-detskoy", "remont-balkona", "remont-prihozhey"]
 
 # ---------------------------------------------------------------- портфолио: 20 объектов.
 # Фото: orig/portfolio/<slug>/*.jpg (первое по алфавиту — обложка). Подписи замените на настоящие (ЖК, площадь, район).
 PORTFOLIO = [
     dict(slug="obekt-a", title="Квартира под ключ", svc="remont-pod-klyuch"),
-    dict(slug="obekt-b", title="Элитный ремонт", svc="elitnyy-remont"),
+    dict(slug="obekt-b", title="Элитная квартира", svc="elitnyy-remont"),
     dict(slug="obekt-c", title="Санузел с керамогранитом", svc="remont-sanuzla"),
     dict(slug="obekt-d", title="Кухня-гостиная", svc="remont-kuhni"),
-    dict(slug="obekt-e", title="Дизайнерский ремонт", svc="dizaynerskiy-remont"),
+    dict(slug="obekt-e", title="Квартира по дизайн-проекту", svc="dizaynerskiy-remont"),
     dict(slug="obekt-f", title="Квартира в новостройке", svc="remont-v-novostroyke"),
     dict(slug="obekt-g", title="Спальня", svc="remont-komnaty"),
     dict(slug="obekt-h", title="Ванная комната", svc="remont-vannoy-komnaty"),
-    dict(slug="obekt-i", title="Детская комната", svc="remont-detskoy"),
-    dict(slug="obekt-j", title="Минимализм", svc="remont-v-stile-minimalizm"),
-    dict(slug="obekt-k", title="Неоклассика", svc="remont-v-stile-neoklassika"),
-    dict(slug="obekt-l", title="Капитальный ремонт", svc="kapitalnyy-remont"),
+    dict(slug="obekt-i", title="Детская", svc="remont-detskoy"),
+    dict(slug="obekt-j", title="Интерьер в минимализме", svc="remont-v-stile-minimalizm"),
+    dict(slug="obekt-k", title="Интерьер в неоклассике", svc="remont-v-stile-neoklassika"),
+    dict(slug="obekt-l", title="Квартира после капремонта", svc="kapitalnyy-remont"),
     dict(slug="obekt-m", title="Прихожая", svc="remont-prihozhey"),
-    dict(slug="obekt-n", title="Двухкомнатная квартира", svc="remont-dvuhkomnatnoy-kvartiry"),
-    dict(slug="obekt-o", title="Трёхкомнатная квартира", svc="remont-trehkomnatnoy-kvartiry"),
+    dict(slug="obekt-n", title="Двухкомнатная под ключ", svc="remont-dvuhkomnatnoy-kvartiry"),
+    dict(slug="obekt-o", title="Трёхкомнатная под ключ", svc="remont-trehkomnatnoy-kvartiry"),
     dict(slug="obekt-p", title="Студия", svc="remont-studii"),
-    dict(slug="obekt-q", title="Современный стиль", svc="remont-v-stile-sovremennyy"),
+    dict(slug="obekt-q", title="Современный интерьер", svc="remont-v-stile-sovremennyy"),
     dict(slug="obekt-r", title="Балкон", svc="remont-balkona"),
     dict(slug="obekt-s", title="Офис", svc="remont-ofisa"),
-    dict(slug="obekt-t", title="Пентхаус", svc="remont-pentkhausa"),
+    dict(slug="obekt-t", title="Пентхаус под ключ", svc="remont-pentkhausa"),
 ]
 
 COMMON_FAQ = [
@@ -472,7 +478,7 @@ CHAT_ALIASES = {
     "remont-studii": "студи", "remont-odnokomnatnoy-kvartiry": "однокомнат|1-комнат|1 комнат", "remont-dvuhkomnatnoy-kvartiry": "двухкомнат|2-комнат|2 комнат",
     "remont-trehkomnatnoy-kvartiry": "тр[её]хкомнат|3-комнат|3 комнат", "remont-pentkhausa": "пентхаус", "remont-doma": "дом|коттедж|частн",
     "remont-ofisa": "офис", "remont-kommercheskih-pomeshcheniy": "коммерч|магазин|салон|кафе|ресторан",
-    "remont-sanuzla": "санузел|санузл|туалет", "remont-vannoy-komnaty": "ванн|душев", "remont-kuhni": "кухн", "remont-komnaty": "комнат|спальн|гостин",
+    "remont-sanuzla": "санузел|санузл", "remont-tualeta": "туалет|унитаз", "remont-vannoy-komnaty": "ванн|душев", "remont-kuhni": "кухн", "remont-komnaty": "комнат|спальн|гостин",
     "remont-detskoy": "детск", "remont-balkona": "балкон|лоджи", "remont-prihozhey": "прихож|коридор",
     "remont-v-stile-minimalizm": "минимализм", "remont-v-stile-sovremennyy": "современн", "remont-v-stile-neoklassika": "неоклассик",
     "remont-v-stile-klassika": "классик", "remont-v-stile-loft": "лофт", "remont-v-stile-skandinavskiy": "сканди",

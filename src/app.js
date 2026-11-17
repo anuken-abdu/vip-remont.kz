@@ -193,7 +193,7 @@
 
   /* ---------- портфолио: просмотр всех фото объекта ---------- */
   var lb, lbImg, lbCap, lbList = [], lbAt = 0, lbTitle = "", lbFrom = null;
-  var lbShow = function (i) { lbAt = (i + lbList.length) % lbList.length; lbImg.src = lbList[lbAt]; lbImg.alt = lbTitle; lbCap.textContent = lbTitle + (lbList.length > 1 ? " · " + (lbAt + 1) + " / " + lbList.length : ""); };
+  var lbShow = function (i) { lbAt = (i + lbList.length) % lbList.length; lbImg.src = lbList[lbAt]; lbImg.alt = lbTitle; lbCap.textContent = lbTitle + (lbList.length > 1 ? ", фото " + (lbAt + 1) + " из " + lbList.length : ""); };
   var lbClose = function () { lb.hidden = true; document.body.style.overflow = ""; if (lbFrom) lbFrom.focus(); };
   var lbOpen = function (btn) {
     try { lbList = JSON.parse(btn.getAttribute("data-lb")) || []; } catch (e) { lbList = []; }

@@ -31,6 +31,9 @@ def main():
         if d.is_dir():
             for f in sorted(d.glob("*")):
                 if f.suffix.lower() in EXT: save(f, A / "portfolio" / d.name / slug(f.stem), 4 / 3); n += 1
+    for f in O.glob("uzor.*"):                                         # узор для светлых секций, бесшовный
+        if f.suffix.lower() in EXT:
+            with Image.open(f) as im: im.convert("RGBA").save(A / "uzor.webp", "WEBP", quality=90); n += 1
     for f in O.glob("rukovoditel.*"):
         if f.suffix.lower() in EXT: save(f, A / "rukovoditel", 4 / 5, (480, 800)); n += 1
     print("фото обработано:", n)

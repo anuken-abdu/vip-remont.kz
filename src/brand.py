@@ -17,17 +17,17 @@ def logo():
     return w, h
 
 def temp_icon():
-    """Временная иконка: синий круг сайта, буквы VR шрифтом сайта (Manrope)."""
+    """Временная иконка: круг цвета мокко, буквы VR шрифтом сайта (Manrope)."""
     from fontTools.ttLib import TTFont
     ttf = ROOT / "orig" / "_manrope.ttf"
     if not ttf.exists():
         t = TTFont(A / "fonts" / "manrope-latin-wght-normal.woff2"); t.flavor = None; t.save(ttf)
     s = 1024; im = Image.new("RGBA", (s, s), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
-    d.ellipse((0, 0, s - 1, s - 1), fill=(36, 80, 255, 255))
+    d.ellipse((0, 0, s - 1, s - 1), fill=(110, 85, 65, 255))
     fnt = ImageFont.truetype(str(ttf), 430)
     try: fnt.set_variation_by_axes([800])
     except Exception: pass
-    d.text((s / 2, s / 2 + 8), "VR", font=fnt, fill=(255, 255, 255, 255), anchor="mm")
+    d.text((s / 2, s / 2 + 8), "VR", font=fnt, fill=(251, 248, 243, 255), anchor="mm")
     ttf.unlink()
     return im.resize((512, 512), Image.LANCZOS)
 

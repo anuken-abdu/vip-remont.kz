@@ -8,7 +8,7 @@ from data import *
 
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
-VER = "1811262"
+VER = "1811263"
 E = html.escape
 SV = {s["slug"]: s for s in SERVICES}
 CATN = {c: n for c, n, _ in CATS}
@@ -61,6 +61,7 @@ def minify_css(s):
     s = re.sub(r"\s*\n\s*", "", s)
     return re.sub(r"\s*([{};,>])\s*", r"\1", s).replace(";}", "}")
 CSS = minify_css((ROOT / "src" / "styles.css").read_text(encoding="utf-8"))
+if (ROOT / "assets" / "img" / "uzor.webp").exists(): CSS += ".soft,.calc{background-image:url(/assets/img/uzor.webp);background-size:var(--uzor,480px);background-repeat:repeat}"
 
 def conv_js():
     if not (GADS_ID and GADS_LABEL): return ""
@@ -143,7 +144,7 @@ def flo():
 <button class="flo-c" type="button" data-chat aria-label="Онлайн-консультант">{ic("head")}<span>Консультант</span></button>
 </div>
 <template id="chat-t"><section class="chat" id="chat" aria-label="Онлайн-консультант">
-<div class="chat-h"><span class="av">{ic("head")}</span><span><b>Консультант {BRAND}</b><small>ИИ-помощник · ответит по ремонту</small></span><button type="button" data-chat-x aria-label="Закрыть чат">{ic("x")}</button></div>
+<div class="chat-h"><span class="av">{ic("head")}</span><span><b>Консультант {BRAND}</b><small>ИИ-помощник, ответит по ремонту</small></span><button type="button" data-chat-x aria-label="Закрыть чат">{ic("x")}</button></div>
 <div class="chat-l" aria-live="polite"></div>
 <div class="chat-q">{q}</div>
 <form class="chat-f"><label class="sr" for="cq">Ваш вопрос</label><input id="cq" name="q" autocomplete="off" placeholder="Ваш вопрос" maxlength="500"><button type="submit" aria-label="Отправить">{ic("send")}</button></form>
@@ -178,7 +179,7 @@ def page(path, title, desc, body, cur="", ld=None, noindex=False, og_type="websi
 <meta name="description" content="{E(desc)}">
 {"" if path == "/404.html" else f'<link rel="canonical" href="{url}">'}
 {'<meta name="robots" content="noindex,follow">' if noindex else '<meta name="robots" content="index,follow,max-image-preview:large">'}
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#fbf8f3">
 <meta property="og:type" content="{og_type}"><meta property="og:locale" content="ru_KZ"><meta property="og:site_name" content="{BRAND}">
 <meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{SITE_URL}/assets/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{E(title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:image" content="{SITE_URL}/assets/og.png">
@@ -251,11 +252,15 @@ def steps_html(): return '<ol class="steps">' + "".join(f"<li><h3>{E(h)}</h3><p>
 def factors_html(): return '<dl class="fg fg2">' + "".join(f"<div><dt>{E(h)}</dt><dd>{E(p)}</dd></div>" for h, p in PRICE_FACTORS) + "</dl>"
 def faq_html(faq): return '<div class="faq">' + "".join(f"<details><summary>{E(q)}</summary><p>{E(a)}</p></details>" for q, a in faq) + "</div>"
 
-def card(s, sizes="(max-width: 599px) 86vw, (max-width: 1023px) 45vw, 30vw", big=False):
-    return (f'<a class="pc{" big" if big else ""}" href="/{s["slug"]}/">{pic(svc_img(s["slug"]), s["h1"], sizes, 1200, 900)}'
+def gcols(n):
+    """Колонок столько, чтобы последний ряд был полным: 8, 12, 20, 24 → 4; 3, 6, 9 → 3."""
+    return 4 if n % 4 == 0 and n >= 8 else 3
+def card(s):
+    sizes = "(max-width: 759px) 82vw, (max-width: 1023px) 33vw, 25vw"
+    return (f'<a class="pc" href="/{s["slug"]}/"><span class="pc-i">{pic(svc_img(s["slug"]), s["h1"], sizes, 1200, 900)}</span>'
             f'<span class="pc-t"><b>{s["name"]}</b><span>{s["short"]}</span></span></a>')
-def cards(slugs, cls="pcs", bento=False):
-    return f'<div class="{cls}">' + "".join(card(SV[x], big=bento and i == 0) for i, x in enumerate(slugs)) + "</div>"
+def cards(slugs, row=True):
+    return f'<div class="grid c{gcols(len(slugs))}{" row" if row else ""}">' + "".join(card(SV[x]) for x in slugs) + "</div>"
 
 def catalog(filters=True):
     """Все услуги по категориям; на ПК — вкладки-фильтры."""
@@ -265,15 +270,15 @@ def catalog(filters=True):
     groups = f'<div class="cgc">{g("vid")}</div><div class="cgc">{g("obj")}{g("stil")}</div><div class="cgc">{g("pom")}</div><div class="cgc cgw">{g("rab")}</div>'
     return f'<div class="cat" data-cat>{tabs}<div class="cgs">{groups}</div></div>'
 
-def pf_card(p, sizes="(max-width: 599px) 100vw, (max-width: 1023px) 50vw, 25vw"):
+def pf_card(p, sizes="(max-width: 759px) 100vw, (max-width: 1023px) 33vw, 25vw"):
     ph = pf_photos(p["slug"]); s = SV.get(p["svc"])
     data = json.dumps([f"{x}-1200.webp" for x in ph]) if ph else "[]"
     img = pic(ph[0] if ph else "", p["title"] + " — ремонт в Астане, VIP Remont", sizes, 1200, 900)
     return (f'<figure class="pf"><button type="button" class="pf-o" data-lb=\'{E(data)}\' data-t="{E(p["title"])}" aria-label="Открыть фото: {E(p["title"])}"{"" if ph else " disabled"}>{img}</button>'
             f'<figcaption><b>{E(p["title"])}</b>{svc_link(s)}</figcaption></figure>')
-def svc_link(s): return f'<a href="/{s["slug"]}/">{s["h1"]}</a>' if s else ""
+def svc_link(s): return f'<a href="/{s["slug"]}/">{s["name"]}</a>' if s else ""
 
-def pf_grid(items): return '<div class="pfs">' + "".join(pf_card(p) for p in items) + "</div>"
+def pf_grid(items): return f'<div class="grid c{gcols(len(items))}">' + "".join(pf_card(p) for p in items) + "</div>"
 
 def boss():
     return f'''<section class="s"><div class="w bs"><div class="bs-i">{pic(boss_img(), DIRECTOR + " — руководитель " + BRAND, "(max-width: 767px) 90vw, 40vw", 800, 1000, ss=(480, 800))}</div>
@@ -303,14 +308,14 @@ def build_home():
 <p class="lead">VIP Remont делает ремонт квартир, домов и коммерческих помещений в Астане: под ключ, дизайнерский и элитный, санузлы, кухни и все виды отделочных работ. Своя бригада, смета за три часа после замера, цена фиксируется в договоре.</p>
 <div class="act"><a class="btn" href="#raschet">Рассчитать стоимость</a><a class="btn wl" href="/portfolio/">Смотреть работы</a></div>
 </div><div class="w hero-f">{facts_row()}</div></section>
-<section class="s"><div class="w">{sh("Виды ремонта", "Подберём формат под задачу и бюджет — от обновления отделки до ремонта премиум-класса.", link=("Все услуги", "/uslugi/"))}{cards(HOME_VID, "bento row", True)}</div></section>
+<section class="s"><div class="w">{sh("Виды ремонта", "Подберём формат под задачу и бюджет — от обновления отделки до ремонта премиум-класса.", link=("Все услуги", "/uslugi/"))}{cards(HOME_VID)}</div></section>
 <section class="s elite"><div class="w el-in"><div class="el-i">{pic(svc_img("elitnyy-remont"), elite["h1"], "(max-width: 1023px) 100vw, 50vw", 1200, 900)}</div>
 <div class="el-t"><p class="ey">Премиум-класс</p><h2>Элитный ремонт</h2><p class="lead">{elite["lead"]}</p>
 <ul class="ticks">{"".join(f"<li>{x}</li>" for x in elite["inc"][:6])}</ul>
 <div class="act"><a class="btn" href="/elitnyy-remont/">Подробнее об элитном ремонте</a></div>
 <p class="el-s">Ремонт в стиле</p><ul class="stl">{stl}</ul></div></div></section>
-<section class="s"><div class="w">{sh("Ремонт помещений", "Если нужен ремонт одной комнаты, кухни или санузла.")}{cards(HOME_POM, "pcs six row")}</div></section>
-<section class="s soft"><div class="w">{sh("Наши работы", "Объекты в Астане: квартиры, дома и коммерция.", link=("Все работы", "/portfolio/"))}{pf_grid(PORTFOLIO[:8])}</div></section>
+<section class="s"><div class="w">{sh("Ремонт помещений", "Если нужен ремонт одной комнаты, кухни или санузла.")}{cards(HOME_POM)}</div></section>
+<section class="s soft"><div class="w">{sh("Наши работы", "Объекты в Астане: квартиры, дома и коммерция.", link=("Все работы", "/portfolio/"))}{pf_grid(PORTFOLIO[:6])}</div></section>
 <section class="s"><div class="w">{sh("Почему с нами спокойно", "Всё, что обещаем, записываем в договор.")}{facts_grid()}</div></section>
 <section class="s soft"><div class="w">{sh("Как проходит ремонт", "От заявки до сдачи квартиры под заезд.")}{steps_html()}</div></section>
 <section class="s"><div class="w">{sh("Все услуги", "Виды ремонта, объекты, помещения, стили и отдельные работы.")}{catalog()}</div></section>
@@ -328,7 +333,7 @@ def build_services_index():
     secs = ""
     for i, (c, cn, sub) in enumerate(CATS):
         sl = [s["slug"] for s in SERVICES if s["cat"] == c]
-        secs += f'<section class="s{" soft" if i % 2 else ""}" id="{c}"><div class="w">{sh(cn, sub)}{cards(sl, "pcs")}</div></section>'
+        secs += f'<section class="s{" soft" if i % 2 else ""}" id="{c}"><div class="w">{sh(cn, sub)}{cards(sl, row=False)}</div></section>'
     body = f"""{phero(cr, "Услуги по ремонту в Астане", "Все виды ремонта квартир, домов и коммерческих помещений в Астане — от косметического до элитного, а также отдельные отделочные работы. Своя бригада, цена в договоре.", svc_img("remont-pod-klyuch"))}
 {secs}{calc(ctx="Услуги")}"""
     items = {"@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": f"{SITE_URL}/{s['slug']}/", "name": s["h1"]} for i, s in enumerate(SERVICES)]}
@@ -343,12 +348,11 @@ def build_services():
         prep = "".join(f"<li>{x}</li>" for x in s["prep"])
         faq = s["faq"] + [q for q in COMMON_FAQ if q[0] in ("Как быстро будет смета?", "Даёте гарантию?", "Кто закупает материалы?")][: max(0, 5 - len(s["faq"]))]
         pf = [p for p in PORTFOLIO if p["svc"] == s["slug"]]
-        pf += [p for p in PORTFOLIO if p not in pf and SV[p["svc"]]["cat"] == s["cat"]][: max(0, 4 - len(pf))]
-        pf += [p for p in PORTFOLIO if p not in pf][: max(0, 4 - len(pf))]
-        same = [x["slug"] for x in SERVICES if x["cat"] == s["cat"] and x["slug"] != s["slug"]][:4]
-        if len(same) < 4: same += [x for x in HOME_VID if x != s["slug"] and x not in same][: 4 - len(same)]
+        pf += [p for p in PORTFOLIO if p not in pf and SV[p["svc"]]["cat"] == s["cat"]][: max(0, 3 - len(pf))]
+        pf += [p for p in PORTFOLIO if p not in pf][: max(0, 3 - len(pf))]
+        same = [x["slug"] for x in SERVICES if x["cat"] == s["cat"] and x["slug"] != s["slug"]][:3]
         msg = f"Здравствуйте! Интересует: {s['name'].lower()}."
-        pf_sec = f'<section class="s pt0"><div class="w">{sh("Наши работы", link=("Всё портфолио", "/portfolio/"))}{pf_grid(pf[:4])}</div></section>'
+        pf_sec = f'<section class="s pt0"><div class="w">{sh("Наши работы", link=("Всё портфолио", "/portfolio/"))}{pf_grid(pf[:3])}</div></section>'
         body = f"""{phero(cr, s["h1"], s["lead"], svc_img(s["slug"]), btn2=("Смотреть работы", "/portfolio/"))}
 <section class="s sm-t"><div class="w">{facts_row()}</div></section>
 <section class="s"><div class="w split"><div>{sh("Что входит", "Точный перечень работ для вашего объекта фиксируем в смете.")}</div><ul class="ticks cols">{inc}</ul></div></section>
@@ -358,7 +362,7 @@ def build_services():
 <p class="ask">Остались вопросы? <a href="{wa(msg)}" target="_blank" rel="noopener">Напишите мастеру в WhatsApp</a></p></div>
 <div>{sh("Вопросы")}{faq_html(faq)}</div></div></section>
 {calc(QUIZ_VID.get(s["slug"], "Отдельные работы" if s["cat"] == "rab" else ""), ctx=s["name"])}
-<section class="s"><div class="w">{sh("Смотрите также", link=("Все услуги", "/uslugi/"))}{cards(same, "pcs four row")}</div></section>"""
+<section class="s"><div class="w">{sh("Смотрите также", link=("Все услуги", "/uslugi/"))}{cards(same)}</div></section>"""
         t = s["title"] or (f"{s['h1']} | {BRAND}" if len(s["h1"]) + len(BRAND) + 3 <= 60 else s["h1"])
         d = f"{s['short']}. {s['h1']}: смета за 3 часа после замера, цена фиксируется в договоре, своя бригада."
         if len(d) > 160: d = f"{s['h1']}: {s['short'].lower()}. Смета за 3 часа после замера, цена в договоре."
@@ -390,14 +394,14 @@ def build_districts():
     cr = [("Главная", "/"), ("Районы", "/rayony/")]
     body = f"""{phero(cr, "Ремонт квартир по районам Астаны", "VIP Remont делает ремонт во всех районах Астаны: Есиль, Алматы, Сарыарка, Байконыр и Нура. Выезжаем на замер, смету готовим за три часа.", svc_img("remont-v-novostroyke"))}
 <section class="s"><div class="w">{districts_html()}</div></section>
-<section class="s soft"><div class="w">{sh("Что делаем в любом районе", link=("Все услуги", "/uslugi/"))}{cards(HOME_VID[:6], "pcs six row")}</div></section>{calc(ctx="Районы")}"""
+<section class="s soft"><div class="w">{sh("Что делаем в любом районе", link=("Все услуги", "/uslugi/"))}{cards(HOME_VID)}</div></section>{calc(ctx="Районы")}"""
     page("/rayony/", "Ремонт квартир по районам Астаны | VIP Remont",
          "Ремонт квартир в районах Есиль, Алматы, Сарыарка, Байконыр и Нура. Замер, смета за 3 часа, цена в договоре. Своя бригада.", body, "/rayony/", [crumbs_ld(cr)])
     for d in DISTRICTS:
         path = f"/rayony/{d['slug']}/"; crd = cr + [(d["name"], path)]
         lead = f"Ремонт квартир в {d['gen']} Астаны: под ключ, капитальный, дизайнерский и элитный, санузлы и кухни. {d['note']}"
         body = f"""{phero(crd, f"Ремонт квартир в {d['gen']}", lead, svc_img("remont-pod-klyuch"))}
-<section class="s"><div class="w">{sh(f"Ремонт в {d['gen']}", "Выезжаем на замер, смету готовим в течение трёх часов.")}{cards(HOME_VID[:6], "pcs six row")}</div></section>
+<section class="s"><div class="w">{sh(f"Ремонт в {d['gen']}", "Выезжаем на замер, смету готовим в течение трёх часов.")}{cards(HOME_VID)}</div></section>
 <section class="s soft"><div class="w">{sh("Почему с нами спокойно")}{facts_grid()}</div></section>
 {calc(ray=d["name"], ctx="Район " + d["name"])}
 <section class="s"><div class="w">{sh("Другие районы")}{districts_html(d["slug"])}</div></section>"""
@@ -427,8 +431,8 @@ def build_articles():
     for a in ARTICLES:
         path = f"/stati/{a['slug']}/"; cra = cr + [(a["title"], path)]
         secs = "".join(f"<h2>{E(h)}</h2><ul class='ticks'>" + "".join(f"<li>{E(x)}</li>" for x in li) + "</ul>" for h, li in a["body"])
-        links = " · ".join(f'<a href="{u}">{n}</a>' for n, u in a["links"])
-        body = f"""<section class="s art-s"><div class="w">{crumbs(cra)}<article class="art"><h1>{E(a["h1"])}</h1><p class="dt"><time datetime="{ARTICLE_DATE}">{human}</time> · {BRAND}</p>
+        links = ", ".join(f'<a href="{u}">{n}</a>' for n, u in a["links"])
+        body = f"""<section class="s art-s"><div class="w">{crumbs(cra)}<article class="art"><h1>{E(a["h1"])}</h1><p class="dt"><time datetime="{ARTICLE_DATE}">{human}</time></p>
 <p class="lead">{E(a["lead"])}</p>{secs}<p class="rel">Смотрите также: {links}</p></article></div></section>
 {calc(ctx="Статья")}
 <section class="s"><div class="w">{sh("Другие статьи")}{articles_html(a["slug"])}</div></section>"""
@@ -477,7 +481,7 @@ def build_meta():
     def pri(p): return "1.0" if p == "/" else "0.9" if p.strip("/") in SV else "0.7" if p in ("/uslugi/", "/ceny/", "/portfolio/") or p.startswith("/rayony/") else "0.6"
     sm = "".join(f"<url><loc>{SITE_URL}{p}</loc><lastmod>{ARTICLE_DATE}</lastmod><priority>{pri(p)}</priority></url>" for p in SITEMAP)
     (DIST / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>\n', encoding="utf-8")
-    (DIST / "site.webmanifest").write_text(json.dumps({"name": f"{BRAND} — ремонт квартир в Астане", "short_name": BRAND, "start_url": "/", "display": "standalone", "background_color": "#ffffff", "theme_color": "#2450ff",
+    (DIST / "site.webmanifest").write_text(json.dumps({"name": f"{BRAND} — ремонт квартир в Астане", "short_name": BRAND, "start_url": "/", "display": "standalone", "background_color": "#fbf8f3", "theme_color": "#fbf8f3",
         "icons": [{"src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png"}]}, ensure_ascii=False), encoding="utf-8")
     svc = "\n\n".join(f"### {cn}\n" + "\n".join(f"- {s['h1']} ({s['short'].lower()}): {SITE_URL}/{s['slug']}/" for s in SERVICES if s["cat"] == c) for c, cn, _ in CATS)
     llms = f"""# {BRAND} — ремонт квартир в Астане
